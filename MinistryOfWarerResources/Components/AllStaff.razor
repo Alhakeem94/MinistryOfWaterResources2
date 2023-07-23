@@ -1,0 +1,39 @@
+﻿@page "/AllEmp"
+@using Microsoft.EntityFrameworkCore;
+@using MinistryOfWarerResources.Data;
+@using MinistryOfWarerResources.Models;
+
+@inject ApplicationDbContext _db
+
+<label>Enter First Number</label>
+<input  type="number" @bind="SumModel.FirstNumber" />
+
+<label>Enter Second Number</label>
+<input type="number" @bind="SumModel.SecondNumber"/>
+
+<button class="btn btn-primary" @onclick="Sumation">Add</button>
+
+
+<h3>The Result Is : @SumModel.Result</h3>
+
+
+
+
+
+@code{
+
+
+    public SummationModel SumModel { get; set; } = new SummationModel();
+    
+
+
+   
+
+    public void Sumation()
+    {
+        SumModel.Result = SumModel.FirstNumber + SumModel.SecondNumber;
+    }
+
+
+
+}

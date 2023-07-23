@@ -1,0 +1,29 @@
+﻿@page "/AddNewOffice"
+
+@using MinistryOfWarerResources.BackEnd.Interfaces;
+@using MinistryOfWarerResources.Models;
+
+
+@inject IOffice _Office
+@inject IJSRuntime _js
+
+<form @onsubmit="AddNewOfficeToDb">
+    <input @bind="NewOffice.OfficeName" placeholder="Enter the Office Name please"
+            type="text" required class="form-control" />
+    <br/>
+    <button class="btn btn-primary form-control" type="submit" >Add Office</button>
+</form>
+
+
+
+
+@code{
+
+    public OfficeModel NewOffice { get; set; } = new OfficeModel();
+
+    private async Task AddNewOfficeToDb()
+    {
+        var MessageFromRepo = await _Office.AddNewOffice(NewOffice);
+        await _js.InvokeVoidAsync("alert", MessageFromRepo);
+    }
+}

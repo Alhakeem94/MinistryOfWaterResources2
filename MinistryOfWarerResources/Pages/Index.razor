@@ -1,0 +1,188 @@
+﻿@page "/"
+@using Microsoft.EntityFrameworkCore;
+@using MinistryOfWarerResources.Data;
+@using MinistryOfWarerResources.Models;
+@inject IJSRuntime _js
+
+@inject ApplicationDbContext _db
+    
+
+
+<div style="border:solid;padding:20px;background-color:whitesmoke;border-color:lightblue;border-radius:20px;">
+    <form>
+        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
+            <div class="col">
+                <label>Please Enter Full Name</label>
+                <input @bind-value="@EmpData.EmpFullName" type="text" placeholder="Full Name" class="form-control" />
+            </div>
+            <div class="col">
+                <label>Your Id Number</label>
+                <input @bind-value="@EmpData.EmpNumber" type="text" placeholder="Emp Id" class="form-control" />
+            </div>
+            <div class="col">
+                <label>Your Age please </label>
+                <input @bind-value="@EmpData.EmpAge" type="number" placeholder="Example.. 25 , 30 ,40....etc" class="form-control" />
+            </div>
+        </div>
+
+
+        <br/>
+        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
+            <div class="col">
+                <label>Please Enter Your Salary</label>
+                <input @bind-value="@EmpData.EmpSalary" type="number" class="form-control" />
+            </div>
+
+            <div class="col">
+                <label>Office</label>
+                <select class="form-control" @onchange="FilterDepData">
+                    <option>Please Select Office</option>
+                    @foreach (var item in ListOfOffices)
+                    {
+                        <option value="@item.Id">@item.OfficeName</option>
+                    }
+                </select>
+            </div>
+            <div class="col">
+                <label>Department</label>
+                <select class="form-control" @bind="EmpData.EmpDep">
+                    <option>Please Select Dept</option>
+                    @foreach (var item in ListOfFilteredDepts)
+                    {
+                        <option value="@item.Id">@item.DepName</option>
+                    }
+                </select>
+            </div>           
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col">
+                <label>Status</label>
+                <select class="form-control" @bind="EmpData.EmploymentStatus">
+                    <option>Select Status</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Perminant">Perminant</option>
+                    <option value="Daily Wages">Daily Wages</option>
+                    <option value="Space Man">Space Man</option>
+                </select>
+            </div>
+             <div class="col">
+                <label>City</label>
+                <select class="form-control" @bind="EmpData.City">
+                    <option>Emp City</option>
+                    <option value="Baghdad">Baghdad</option>
+                    <option value="Basra">Basra</option>
+                    <option value="Babel">Babel</option>
+                    <option value="Kut">Kut</option>
+                </select>
+            </div>
+            <div class="col">
+                <label>Date Of Employemnt</label>
+                <input type="date" class="form-control" @bind-value="EmpData.DateOfEmployemnt" />
+            </div>
+        </div>
+
+        <br/>
+        <InputFile  accept=".png,.jpg,.jpeg" class="form-control" OnChange="CheckFile"  />
+
+
+        <br/>
+        <button class="btn btn-primary form-control">Save Emp</button>
+    </form>
+</div>
+
+
+
+
+
+
+@code{
+
+    public List<OfficeModel> ListOfOffices { get; set; } =new List<OfficeModel>();
+    public List<DepModel> ListOfDepts { get; set; } = new List<DepModel>();
+    public EmpModel EmpData { get; set; } = new EmpModel();
+    public List<DepModel> ListOfFilteredDepts { get; set; } = new List<DepModel>();
+
+    public InputFileChangeEventArgs InputFile { get; set; }
+
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListOfOffices = await _db.OfficeTable.ToListAsync();
+        ListOfDepts = await _db.DepTable.ToListAsync();
+    }
+
+
+    private void FilterDepData(ChangeEventArgs args)
+    {
+        var Id = int.Parse(args.Value.ToString());
+        ListOfFilteredDepts = ListOfDepts.Where(a => a.OfficeTableId == Id).ToList();
+    }
+
+
+
+
+    private async Task CheckFile(InputFileChangeEventArgs UploadedFile)
+    {
+        if (UploadedFile.File.ContentType == "image/png" || UploadedFile.File.ContentType == "image/jpeg")
+        {
+            if (UploadedFile.File.Size > 500000)
+            {
+                await _js.InvokeVoidAsync("alert", "Image Size larger than 2 MB please upload an image less that 2MB");
+                return;
+            }else
+            {
+                await _js.InvokeVoidAsync("alert", "Everything Looks Good");   
+
+            }
+
+        }else
+        {
+            await _js.InvokeVoidAsync("alert", "Please Upload png or jpeg Image File");
+            return;
+        }
+    }
+
+
+
+
+    //public async Task<string> UploadFileAndReturnPathString(InputFileChangeEventArgs newFile)
+    //{
+    //    FileInfo fileInfo = new FileInfo(newFile.File.Name);
+
+    //    var filename = Guid.NewGuid().ToString() + fileInfo.Name;
+    //    var folderdirectory = $"{_env.WebRootPath}\\ResearchesFile";
+    //    var path = Path.Combine(_env.WebRootPath, "ResearchesFile", filename);
+
+    //    var memorystream = new MemoryStream();
+    //    await newFile.File.OpenReadStream(20000000).CopyToAsync(memorystream);
+
+    //    if (!Directory.Exists(folderdirectory))
+    //    {
+    //        Directory.CreateDirectory(folderdirectory);
+    //    }
+
+    //    await using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write))
+    //    {
+    //        memorystream.WriteTo(fs);
+    //    }
+
+    //    var fullpath = $"ResearchesFile/{filename}";
+    //    return fullpath;
+    //}
+
+
+
+
+
+
+
+
+
+
+}
+
+
+
