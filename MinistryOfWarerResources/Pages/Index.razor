@@ -1,15 +1,17 @@
 ﻿@page "/"
 @using Microsoft.EntityFrameworkCore;
+@using MinistryOfWarerResources.BackEnd.Interfaces;
 @using MinistryOfWarerResources.Data;
 @using MinistryOfWarerResources.Models;
-@inject IJSRuntime _js
 
+@inject IJSRuntime _js
+@inject IWebHostEnvironment _env
 @inject ApplicationDbContext _db
-    
+@inject IEmp _Emp
 
 
 <div style="border:solid;padding:20px;background-color:whitesmoke;border-color:lightblue;border-radius:20px;">
-    <form>
+    <form @onsubmit="SaveData">
         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
             <div class="col">
                 <label>Please Enter Full Name</label>
@@ -39,7 +41,7 @@
                     <option>Please Select Office</option>
                     @foreach (var item in ListOfOffices)
                     {
-                        <option value="@item.Id">@item.OfficeName</option>
+                        <option value="@item.Id">@item.OfficeName</option> // Bachelor Degree
                     }
                 </select>
             </div>
@@ -85,7 +87,6 @@
         <br/>
         <InputFile  accept=".png,.jpg,.jpeg" class="form-control" OnChange="CheckFile"  />
 
-
         <br/>
         <button class="btn btn-primary form-control">Save Emp</button>
     </form>
@@ -103,7 +104,7 @@
     public EmpModel EmpData { get; set; } = new EmpModel();
     public List<DepModel> ListOfFilteredDepts { get; set; } = new List<DepModel>();
 
-    public InputFileChangeEventArgs InputFile { get; set; }
+    public InputFileChangeEventArgs UplaodedUserImage { get; set; }
 
 
 
@@ -111,31 +112,48 @@
     protected override async Task OnInitializedAsync()
     {
         ListOfOffices = await _db.OfficeTable.ToListAsync();
-        ListOfDepts = await _db.DepTable.ToListAsync();
+        ListOfDepts = await _db.DepTable.Include(a=>a.OfficeTable).ToListAsync();
     }
 
 
     private void FilterDepData(ChangeEventArgs args)
     {
         var Id = int.Parse(args.Value.ToString());
-        ListOfFilteredDepts = ListOfDepts.Where(a => a.OfficeTableId == Id).ToList();
+        ListOfFilteredDepts = ListOfDepts.Where(a => a.OfficeTableId == Id).ToList();       
     }
 
 
+    private async Task SaveData()
+    {
+        var UserResponse = await _js.InvokeAsync<bool>("confirm","Are you sure to add the User");
+        if (UserResponse)
+        {
+            var CheckUserExists = await _Emp.CheckIfUserExistsInDB(EmpData.EmpNumber);
+            if (CheckUserExists is true)
+            {
+                await _js.InvokeVoidAsync("alert", $"The Emp : {EmpData.EmpFullName} Already Exists it the system");
+            }else
+            {
+                EmpData.DeptTable = ListOfDepts.FirstOrDefault(a => a.Id == EmpData.EmpDep);
+                EmpData.EmpImagePath = await UploadUserImageToFileSystem();
+                var BackEndResponse = await _Emp.AddNewEmpToTheSystem(EmpData);
 
+                await _js.InvokeVoidAsync("alert", BackEndResponse);
+            }
+        }
+    }
 
     private async Task CheckFile(InputFileChangeEventArgs UploadedFile)
     {
         if (UploadedFile.File.ContentType == "image/png" || UploadedFile.File.ContentType == "image/jpeg")
         {
-            if (UploadedFile.File.Size > 500000)
+            if (UploadedFile.File.Size > 2000000)
             {
                 await _js.InvokeVoidAsync("alert", "Image Size larger than 2 MB please upload an image less that 2MB");
-                return;
             }else
             {
-                await _js.InvokeVoidAsync("alert", "Everything Looks Good");   
-
+                await _js.InvokeVoidAsync("alert", "Everything Looks Good");
+                UplaodedUserImage = UploadedFile;
             }
 
         }else
@@ -144,6 +162,31 @@
             return;
         }
     }
+
+
+
+    private async Task<string> UploadUserImageToFileSystem()
+    {
+
+        var FileName = EmpData.EmpFullName + "_" + Guid.NewGuid().ToString() + $"{UplaodedUserImage.File.Name}";
+        // MohammedAbdull_109273918628736127835gbegt675e
+        var FolderPath = $"{_env.WebRootPath}\\EmpImages";
+        // var FullPath = //server/wwwroot/EmpImages/FileName
+        var FullPath = Path.Combine(FolderPath, FileName);
+
+        var MemoryStream = new MemoryStream();
+        await UplaodedUserImage.File.OpenReadStream(2000000).CopyToAsync(MemoryStream);
+
+
+        // FileMode : to give permission to the filestream to create files 
+        await using (var fs = new FileStream(FullPath, FileMode.Create, FileAccess.Write))
+        {
+            MemoryStream.WriteTo(fs);
+        }
+
+        return FullPath;
+    }
+
 
 
 

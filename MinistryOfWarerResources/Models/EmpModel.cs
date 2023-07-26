@@ -21,7 +21,6 @@ namespace MinistryOfWarerResources.Models
         public string EmpImagePath { get; set; }
 
 
-
         public DepModel DeptTable { get; set; }
 
 

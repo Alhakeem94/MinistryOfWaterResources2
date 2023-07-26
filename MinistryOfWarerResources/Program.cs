@@ -33,6 +33,8 @@ builder.Services.AddSingleton<WeatherForecastService>();
 
 builder.Services.AddScoped<IOffice, OfficeRepo>();
 builder.Services.AddScoped<IDepts, DeptRepo>();
+builder.Services.AddScoped<IEmp, EmpRepo>();
+
 
 var app = builder.Build();
 
