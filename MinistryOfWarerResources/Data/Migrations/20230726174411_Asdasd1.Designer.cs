@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinistryOfWarerResources.Data;
 
@@ -11,9 +12,10 @@ using MinistryOfWarerResources.Data;
 namespace MinistryOfWarerResources.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230726174411_Asdasd1")]
+    partial class Asdasd1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -246,54 +248,6 @@ namespace MinistryOfWarerResources.Data.Migrations
                     b.ToTable("DepTable");
                 });
 
-            modelBuilder.Entity("MinistryOfWarerResources.Models.EmpModel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DateOfEmployemnt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("EmpAge")
-                        .HasColumnType("int");
-
-                    b.Property<int>("EmpDep")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EmpFullName")
-                        .IsRequired()
-                        .HasMaxLength(60)
-                        .HasColumnType("nvarchar(60)");
-
-                    b.Property<string>("EmpImagePath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("EmpNumber")
-                        .IsRequired()
-                        .HasMaxLength(14)
-                        .HasColumnType("nvarchar(14)");
-
-                    b.Property<decimal>("EmpSalary")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("EmploymentStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("EmpDep");
-
-                    b.ToTable("EmpTable");
-                });
-
             modelBuilder.Entity("MinistryOfWarerResources.Models.OfficeModel", b =>
                 {
                     b.Property<int>("Id")
@@ -371,17 +325,6 @@ namespace MinistryOfWarerResources.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("OfficeTable");
-                });
-
-            modelBuilder.Entity("MinistryOfWarerResources.Models.EmpModel", b =>
-                {
-                    b.HasOne("MinistryOfWarerResources.Models.DepModel", "DeptTable")
-                        .WithMany()
-                        .HasForeignKey("EmpDep")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("DeptTable");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,4 +1,5 @@
 ﻿@page "/"
+
 @using Microsoft.EntityFrameworkCore;
 @using MinistryOfWarerResources.BackEnd.Interfaces;
 @using MinistryOfWarerResources.Data;
@@ -11,15 +12,17 @@
 
 
 <div style="border:solid;padding:20px;background-color:whitesmoke;border-color:lightblue;border-radius:20px;">
-    <form @onsubmit="SaveData">
+    <EditForm OnValidSubmit="SaveData" Model="EmpData">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
             <div class="col">
                 <label>Please Enter Full Name</label>
-                <input @bind-value="@EmpData.EmpFullName" type="text" placeholder="Full Name" class="form-control" />
+                <InputText  @bind-Value="EmpData.EmpFullName"  placeholder="Full Name" class="form-control" />
             </div>
             <div class="col">
                 <label>Your Id Number</label>
-                <input @bind-value="@EmpData.EmpNumber" type="text" placeholder="Emp Id" class="form-control" />
+                <input maxlength="14" min="14" @bind-value="@EmpData.EmpNumber" type="text" placeholder="Emp Id" class="form-control" />
             </div>
             <div class="col">
                 <label>Your Age please </label>
@@ -89,7 +92,7 @@
 
         <br/>
         <button class="btn btn-primary form-control">Save Emp</button>
-    </form>
+    </EditForm>
 </div>
 
 
@@ -113,6 +116,7 @@
     {
         ListOfOffices = await _db.OfficeTable.ToListAsync();
         ListOfDepts = await _db.DepTable.Include(a=>a.OfficeTable).ToListAsync();
+        EmpData.DateOfEmployemnt = DateTime.Now;
     }
 
 
@@ -134,11 +138,12 @@
                 await _js.InvokeVoidAsync("alert", $"The Emp : {EmpData.EmpFullName} Already Exists it the system");
             }else
             {
-                EmpData.DeptTable = ListOfDepts.FirstOrDefault(a => a.Id == EmpData.EmpDep);
                 EmpData.EmpImagePath = await UploadUserImageToFileSystem();
                 var BackEndResponse = await _Emp.AddNewEmpToTheSystem(EmpData);
 
                 await _js.InvokeVoidAsync("alert", BackEndResponse);
+                EmpData = new EmpModel();
+
             }
         }
     }
