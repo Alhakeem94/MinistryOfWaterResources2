@@ -35,5 +35,51 @@ namespace MinistryOfWarerResources.BackEnd.Repositories
             }
 
         }
+
+        public async Task<string> DeleteEmp(int EmpId)
+        {
+            try
+            {
+                var DeletedEmp = await _db.EmpTable.FirstOrDefaultAsync(a => a.Id == EmpId);
+                _db.EmpTable.Remove(DeletedEmp);
+                await _db.SaveChangesAsync();
+                return $"The Emp with Id :{EmpId} has been Deleted Successfully";
+            }
+            catch (Exception error)
+            {
+                return error.Message;
+            }
+        }
+
+        public async Task<string> DeleteListOfEmps(List<int> ListOfDeletedEmps)
+        {
+            try
+            {
+                var ListOfDeletedEmp = new List<EmpModel>();
+
+                foreach (var item in ListOfDeletedEmps)
+                {
+                    var Emp = await _db.EmpTable.FirstOrDefaultAsync(a => a.Id == item);
+                    ListOfDeletedEmp.Add(Emp);
+                }
+
+                 _db.EmpTable.RemoveRange(ListOfDeletedEmp);
+                 await _db.SaveChangesAsync();
+                return "the Emps Have been deleted succesfully";
+              
+            }
+            catch (Exception error) 
+            {
+                return error.Message;
+            }
+        }
+
+        public async Task<List<EmpModel>> GetListOfAllEmps()
+        {
+            var ListOfEmps = await _db.EmpTable.Include(a=>a.DeptTable).ThenInclude(a=>a.OfficeTable).ToListAsync();
+            return ListOfEmps;
+        }
+
+
     }
 }

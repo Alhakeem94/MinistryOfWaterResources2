@@ -1,39 +1,116 @@
 ﻿@page "/AllEmp"
-@using Microsoft.EntityFrameworkCore;
-@using MinistryOfWarerResources.Data;
+
+@using System.Net.Http.Json
+@using MinistryOfWarerResources.BackEnd.Interfaces;
 @using MinistryOfWarerResources.Models;
-
-@inject ApplicationDbContext _db
-
-<label>Enter First Number</label>
-<input  type="number" @bind="SumModel.FirstNumber" />
-
-<label>Enter Second Number</label>
-<input type="number" @bind="SumModel.SecondNumber"/>
-
-<button class="btn btn-primary" @onclick="Sumation">Add</button>
+@inject IEmp _Emp
+@inject IJSRuntime _js
+@inject ISnackbar _Sb
 
 
-<h3>The Result Is : @SumModel.Result</h3>
+<MudDataGrid T="EmpModel" MultiSelection="true" Items="@Elements" SortMode="SortMode.Multiple" Filterable="true" QuickFilter="@_quickFilter"
+             Hideable="true" RowClick="@RowClicked" SelectedItemsChanged="@SelectedItemsChanged">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">All Emps Table</MudText>
+        <br/>
+        <button @onclick="DeleteEmps" class="btn btn-outline-danger" style="margin-left:10px">Delete Emps</button>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+                      AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <Columns>
+        <SelectColumn T="EmpModel" />
+        <PropertyColumn Property="x => x.EmpFullName" Title="Emp Name" Sortable="true" Filterable="false" />
+        <PropertyColumn Property="x => x.EmpNumber" Title="Emp Number" />
+        <PropertyColumn Property="x => x.EmploymentStatus" SortBy="@_sortBy" />
+        <PropertyColumn Property="x => x.City" Title="Emp City" />
+        <PropertyColumn Property="x => x.DeptTable.DepName" Title="Dep Name" />
+        <PropertyColumn Property="x => x.DeptTable.OfficeTable.OfficeName" Title="Office Name" />
+    </Columns>
+    <PagerContent>
+        <MudDataGridPager T="EmpModel" />
+    </PagerContent>
+</MudDataGrid>
 
 
 
 
 
-@code{
+
+@code {
 
 
-    public SummationModel SumModel { get; set; } = new SummationModel();
-    
+    private IEnumerable<EmpModel> Elements = new List<EmpModel>();
+    private string _searchString;
+    private bool _sortNameByLength;
+    private List<string> _events = new();
 
 
-   
+    public List<EmpModel> ListOfDeletedEmps { get; set; } = new List<EmpModel>();
 
-    public void Sumation()
+
+
+
+    private Func<EmpModel, object> _sortBy => x =>
     {
-        SumModel.Result = SumModel.FirstNumber + SumModel.SecondNumber;
+        if (_sortNameByLength)
+            return x.EmpFullName.Length;
+        else
+            return x.EmpFullName;
+    };
+    // quick filter - filter gobally across multiple columns with the same input
+    private Func<EmpModel, bool> _quickFilter => x =>
+    {
+        if (string.IsNullOrWhiteSpace(_searchString))
+            return true;
+
+        if (x.EmpFullName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if (x.DeptTable.DepName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (x.DeptTable.OfficeTable.OfficeName.Contains(_searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+
+        if ($"{x.EmpNumber} {x.DateOfEmployemnt.ToString()} {x.EmploymentStatus}".Contains(_searchString))
+            return true;
+
+        return false;
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        Elements = await _Emp.GetListOfAllEmps();
     }
 
+    // events
+    void RowClicked(DataGridRowClickEventArgs<EmpModel> args)
+    {
+        _events.Insert(0, $"Event = RowClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
+    }
+
+    void SelectedItemsChanged(HashSet<EmpModel> items)
+    {
+        _events.Insert(0, $"Event = SelectedItemsChanged, Data = {System.Text.Json.JsonSerializer.Serialize(items)}");
+        ListOfDeletedEmps = items.ToList();
+    }
+
+
+
+    private async Task DeleteEmps()
+    {
+        var Response = await _js.InvokeAsync<bool>("confirm","Are you sure to Delete the Emps");
+        if (Response)
+        {
+            var BackEndResponse = await _Emp.DeleteListOfEmps(ListOfDeletedEmps.Select(a => a.Id).ToList());
+            _Sb.Add(BackEndResponse, Severity.Success);
+            Elements = await _Emp.GetListOfAllEmps();
+        }
+        else
+        {
+            return;
+        }
+    }
 
 
 }

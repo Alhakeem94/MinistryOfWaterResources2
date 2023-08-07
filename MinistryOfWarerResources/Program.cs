@@ -8,6 +8,7 @@ using MinistryOfWarerResources.Areas.Identity;
 using MinistryOfWarerResources.BackEnd.Interfaces;
 using MinistryOfWarerResources.BackEnd.Repositories;
 using MinistryOfWarerResources.Data;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuth
 builder.Services.AddScoped<IOffice, OfficeRepo>();
 builder.Services.AddScoped<IDepts, DeptRepo>();
 builder.Services.AddScoped<IEmp, EmpRepo>();
+builder.Services.AddMudServices();
 
 
 var app = builder.Build();

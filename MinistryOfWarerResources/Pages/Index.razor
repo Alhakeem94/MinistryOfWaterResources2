@@ -196,36 +196,6 @@
 
 
 
-    //public async Task<string> UploadFileAndReturnPathString(InputFileChangeEventArgs newFile)
-    //{
-    //    FileInfo fileInfo = new FileInfo(newFile.File.Name);
-
-    //    var filename = Guid.NewGuid().ToString() + fileInfo.Name;
-    //    var folderdirectory = $"{_env.WebRootPath}\\ResearchesFile";
-    //    var path = Path.Combine(_env.WebRootPath, "ResearchesFile", filename);
-
-    //    var memorystream = new MemoryStream();
-    //    await newFile.File.OpenReadStream(20000000).CopyToAsync(memorystream);
-
-    //    if (!Directory.Exists(folderdirectory))
-    //    {
-    //        Directory.CreateDirectory(folderdirectory);
-    //    }
-
-    //    await using (var fs = new FileStream(path, FileMode.Create, FileAccess.Write))
-    //    {
-    //        memorystream.WriteTo(fs);
-    //    }
-
-    //    var fullpath = $"ResearchesFile/{filename}";
-    //    return fullpath;
-    //}
-
-
-
-
-
-
 
 
 
