@@ -76,7 +76,7 @@ namespace MinistryOfWarerResources.BackEnd.Repositories
 
         public async Task<List<EmpModel>> GetListOfAllEmps()
         {
-            var ListOfEmps = await _db.EmpTable.Include(a=>a.DeptTable).ThenInclude(a=>a.OfficeTable).ToListAsync();
+            var ListOfEmps = await _db.EmpTable.AsNoTracking().Include(a=>a.DeptTable).ThenInclude(a=>a.OfficeTable).ToListAsync();
             return ListOfEmps;
         }
 
