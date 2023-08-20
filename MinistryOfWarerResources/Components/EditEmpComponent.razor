@@ -1,0 +1,218 @@
+﻿@page "/EditEmp/{EmpId}"
+
+@using Microsoft.EntityFrameworkCore;
+@using MinistryOfWarerResources.BackEnd.Interfaces;
+@using MinistryOfWarerResources.Data;
+@using MinistryOfWarerResources.Models;
+
+@inject IEmp _Emp
+@inject IOffice _Office
+@inject IDepts _Dept
+@inject ISnackbar _Sb
+@inject ApplicationDbContext _db
+
+
+
+
+
+
+<img src="@EditedEmpData.EmpImagePath" />
+
+<div style="border:solid;background-color:whitesmoke;border-color:lightblue;border-radius:20px;margin:20px;padding:20px">
+    <EditForm OnValidSubmit="EditData" Model="EditedEmpData">
+
+        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
+            <div class="col">
+                <label>Please Enter Full Name</label>
+                <InputText @bind-Value="EditedEmpData.EmpFullName" placeholder="Full Name" class="form-control" />
+            </div>
+            <div class="col">
+                <label>Your Id Number</label>
+                <input maxlength="14" min="14" @bind-value="@EditedEmpData.EmpNumber" type="text" placeholder="Emp Id" class="form-control" />
+            </div>
+            <div class="col">
+                <label>Your Age please </label>
+                <input @bind-value="@EditedEmpData.EmpAge" type="number" placeholder="Example.. 25 , 30 ,40....etc" class="form-control" />
+            </div>
+        </div>
+
+
+        <br />
+        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
+            <div class="col">
+                <label>Please Enter Your Salary</label>
+                <input @bind-value="@EditedEmpData.EmpSalary" type="number" class="form-control" />
+            </div>
+
+            <div class="col">
+                <label>Office</label>
+                <InputSelect class="form-control" ValueExpression="@(()=>EditedEmpData.DeptTable.OfficeTableId)" Value="EditedEmpData.DeptTable.OfficeTableId" ValueChanged="@((int value)=>FilterDepData(value))">
+                    <option>Please Select Office</option>
+                    @foreach (var item in ListOfOffices)
+                    {
+                        <option value="@item.Id">@item.OfficeName</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <div class="col">
+                <label>Department</label>
+                <InputSelect class="form-control" ValueExpression="@(()=>EditedEmpData.EmpDep)" Value="EditedEmpData.EmpDep">
+                    <option>Please Select Dept</option>
+                    @foreach (var item in ListOfFilteredDepts)
+                    {
+                        <option value="@item.Id">@item.DepName</option>
+                    }
+                </InputSelect>
+            </div>
+
+        </div>
+        <br />
+        <div class="row">
+            <div class="col">
+                <label>Status</label>
+                <select class="form-control" @bind="EditedEmpData.EmploymentStatus">
+                    <option>Select Status</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Perminant">Perminant</option>
+                    <option value="Daily Wages">Daily Wages</option>
+                    <option value="Space Man">Space Man</option>
+                </select>
+            </div>
+            <div class="col">
+                <label>City</label>
+                <select class="form-control" @bind="EditedEmpData.City">
+                    <option>Emp City</option>
+                    <option value="Baghdad">Baghdad</option>
+                    <option value="Basra">Basra</option>
+                    <option value="Babel">Babel</option>
+                    <option value="Kut">Kut</option>
+                </select>
+            </div>
+            <div class="col">
+                <label>Date Of Employemnt</label>
+                <input type="date" class="form-control" @bind-value="EditedEmpData.DateOfEmployemnt" />
+            </div>
+        </div>
+
+        <br />
+        <InputFile accept=".png,.jpg,.jpeg" class="form-control" OnChange="CheckFile" />
+
+        <br />
+        <button class="btn btn-primary form-control" type="submit">Edit Emp Data</button>
+    </EditForm>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+@code {
+
+
+
+    [Parameter]
+    public string EmpId { get; set; } 
+
+    public List<OfficeModel> ListOfOffices { get; set; } = new List<OfficeModel>();
+    public List<DepModel> ListOfDepts { get; set; } = new List<DepModel>();
+    public List<DepModel> ListOfFilteredDepts { get; set; } = new List<DepModel>();
+    public EmpModel EditedEmpData { get; set; } = new EmpModel();
+    public InputFileChangeEventArgs UplaodedUserImage { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            if (EmpId == "")
+            {
+
+            }else
+            {
+                ListOfOffices = await _db.OfficeTable.ToListAsync();
+                ListOfDepts = await _db.DepTable.Include(a => a.OfficeTable).ToListAsync();
+                ListOfFilteredDepts = ListOfDepts;
+            }
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            EditedEmpData = await _db.EmpTable.FirstOrDefaultAsync(a => a.Id == int.Parse(EmpId));
+        }else
+        {
+            return;
+        }
+    }
+
+
+    private async Task EditData()
+    {
+        try
+        {
+            var Result = await _Emp.EditEmp(EditedEmpData, UplaodedUserImage);
+
+        }
+        catch (Exception error)
+        {
+            _Sb.Add(error.Message, Severity.Error);
+        }
+
+    }
+
+
+    private void FilterDepData(int OfficeId)
+    {
+        ListOfFilteredDepts = ListOfDepts.Where(a => a.OfficeTableId == OfficeId).ToList();
+        //EditedEmpData.DeptTable.OfficeTableId = OfficeId;
+        EditedEmpData.DeptTable.OfficeTableId = OfficeId;
+    }
+
+    private async Task CheckFile(InputFileChangeEventArgs UploadedFile)
+    {
+        if (UploadedFile.File.ContentType == "image/png" || UploadedFile.File.ContentType == "image/jpeg")
+        {
+            if (UploadedFile.File.Size > 2000000)
+            {
+                _Sb.Add("Image Size larger than 2 MB please upload an image less that 2MB", Severity.Error);
+            }
+            else
+            {
+                _Sb.Add("Everything Looks Good", Severity.Info);
+                UplaodedUserImage = UploadedFile;
+            }
+        }
+        else
+        {
+            _Sb.Add("Please Upload png or jpeg Image File", Severity.Error);
+            return;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+}

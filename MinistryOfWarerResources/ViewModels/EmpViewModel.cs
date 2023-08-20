@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace MinistryOfWarerResources.ViewModel
+namespace MinistryOfWarerResources.ViewModels
 {
-    public class EditViewModel
+    public class EmpViewModel
     {
         public int Id { get; set; }
         [Required]
@@ -19,8 +19,9 @@ namespace MinistryOfWarerResources.ViewModel
         [Range(16, 60, ErrorMessage = "Age should between 16-60")]
         public int EmpAge { get; set; }
 
-        [ForeignKey("DeptTable")]
         public int EmpDep { get; set; }
+        public int OfficeId { get; set; }
+
 
         [Required]
         [Range(150000, 7000000, ErrorMessage = "Salary should be between 150000-7000000")]
@@ -34,6 +35,5 @@ namespace MinistryOfWarerResources.ViewModel
         public string? EmpImagePath { get; set; }
 
 
-        public DepModel DeptTable { get; set; }
     }
 }

@@ -8,7 +8,7 @@
 @inject IJSRuntime _js
 @inject ISnackbar _Sb
 @inject IDialogService _Dialog
-
+@inject NavigationManager _Nav
 
 
 <div style="padding:20px">
@@ -104,6 +104,7 @@
         _events.Insert(0, $"Event = SelectedItemsChanged, Data = {System.Text.Json.JsonSerializer.Serialize(items)}");
         ListOfDeletedEmps = items.ToList();
     }
+
     private async Task DeleteEmps()
     {
         var Response = await _js.InvokeAsync<bool>("confirm","Are you sure to Delete the Emps");
@@ -124,8 +125,11 @@
 
     private async Task StartedEditingItem(EmpModel item)
     {
+
+
+        //_Nav.NavigateTo($"/EditEmp/{item.Id}");
         var Parameters = new DialogParameters();
-        Parameters.Add("EditedEmpData", item);
+        Parameters.Add("EmpId", item.Id);
         var ModalOptions = new DialogOptions();
         ModalOptions.MaxWidth = MaxWidth.ExtraExtraLarge;
         ModalOptions.FullWidth = true;

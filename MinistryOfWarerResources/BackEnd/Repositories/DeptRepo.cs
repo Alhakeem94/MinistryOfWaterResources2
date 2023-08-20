@@ -30,5 +30,10 @@ namespace MinistryOfWarerResources.BackEnd.Repositories
                 return $"The Dep :{NewDeptModel.DepName} Already exists in the system";
             }
         }
+
+        public async Task<List<DepModel>> GetAllDepts()
+        {
+            return await _db.DepTable.ToListAsync();
+        }
     }
 }
