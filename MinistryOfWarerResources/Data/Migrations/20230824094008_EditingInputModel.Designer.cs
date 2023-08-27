@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinistryOfWarerResources.Data;
 
@@ -11,9 +12,10 @@ using MinistryOfWarerResources.Data;
 namespace MinistryOfWarerResources.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230824094008_EditingInputModel")]
+    partial class EditingInputModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,22 +49,6 @@ namespace MinistryOfWarerResources.Data.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "oi2eoij-1oqjsdkj-kaslk-OwnerRole",
-                            ConcurrencyStamp = "22c8042b-a29a-4930-84ff-ec63fae52c82",
-                            Name = "owner",
-                            NormalizedName = "OWNER"
-                        },
-                        new
-                        {
-                            Id = "09iasdlkamsoidu9a8sdkasmd",
-                            ConcurrencyStamp = "440b21ee-6ec0-4f84-8c28-022690f0ef6b",
-                            Name = "admin",
-                            NormalizedName = "ADMIN"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -153,24 +139,6 @@ namespace MinistryOfWarerResources.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
-                            AccessFailedCount = 0,
-                            ConcurrencyStamp = "e02d89f4-2db6-4cd5-ab6e-3d3497364559",
-                            Email = "MohammedOwner",
-                            EmailConfirmed = true,
-                            LockoutEnabled = false,
-                            NormalizedEmail = "MOHAMMEDOWNER",
-                            NormalizedUserName = "MOHAMMEDOWNER",
-                            PasswordHash = "Moh12345_",
-                            PhoneNumberConfirmed = false,
-                            SecurityStamp = "97cdd365-2bf7-42ff-93f6-fb6297993485",
-                            TwoFactorEnabled = false,
-                            UserName = "MohammedOwner"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -235,13 +203,6 @@ namespace MinistryOfWarerResources.Data.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            UserId = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
-                            RoleId = "oi2eoij-1oqjsdkj-kaslk-OwnerRole"
-                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>

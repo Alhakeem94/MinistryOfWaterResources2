@@ -23,8 +23,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
@@ -35,6 +38,10 @@ builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuth
 builder.Services.AddScoped<IOffice, OfficeRepo>();
 builder.Services.AddScoped<IDepts, DeptRepo>();
 builder.Services.AddScoped<IEmp, EmpRepo>();
+builder.Services.AddScoped<ISystemUsers, SystemUsersRepo>();
+
+
+
 builder.Services.AddMudServices();
 
 

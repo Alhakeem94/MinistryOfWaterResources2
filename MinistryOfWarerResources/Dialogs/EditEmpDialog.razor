@@ -1,91 +1,104 @@
 ﻿@using MinistryOfWarerResources.ViewModels;
-
-
 @inject IEmp _Emp
 @inject IOffice _Office
 @inject IDepts _Depts
 @inject ISnackbar _Sb
+@inject IWebHostEnvironment _env
+@inject IJSRuntime _js
 
-<div style="padding:20px">
 
-<EditForm Model="EmployeeViewModel" OnValidSubmit="EditData">
-        <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
-            <div class="col">
-                <label>Please Enter Full Name</label>
-            <InputText @bind-Value="EmployeeViewModel.EmpFullName" placeholder="Full Name" class="form-control" />
-            </div>
-            <div class="col">
-                <label>Your Id Number</label>
-            <input maxlength="14" min="14" @bind-value="@EmployeeViewModel.EmpNumber" type="text" placeholder="Emp Id" class="form-control" />
-            </div>
-            <div class="col">
-                <label>Your Age please </label>
-            <input @bind-value="@EmployeeViewModel.EmpAge" type="number" placeholder="Example.. 25 , 30 ,40....etc" class="form-control" />
-            </div>
-        </div>
-        <br />
-         <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
-            <div class="col">
-                <label>Please Enter Your Salary</label>
-                <input @bind-value="@EmployeeViewModel.EmpSalary" type="number" class="form-control" />
-            </div>
 
-            <div class="col">
-                <label>Office</label>
-                <InputSelect class="form-control" Value="EmployeeViewModel.OfficeId" ValueExpression="@(()=>EmployeeViewModel.OfficeId)" ValueChanged="@((int value)=>FilterListOfDepts(value))" >
-                    <option>Selected Office</option>
-                    @foreach (var item in ListOfAllOffices)
-                    {
-                       <Option value="@item.Id">@item.OfficeName</Option>
-                    }
-                </InputSelect>
-            </div>
-            <div class="col">
-                <label>Departments</label>
-                <InputSelect class="form-control" Value="EmployeeViewModel.EmpDep" ValueExpression="@(()=>EmployeeViewModel.EmpDep)" ValueChanged="@((int value)=>ChangeUserDept(value))">
-                    <option>Selected Department</option>
-                    @foreach (var item in ListOfFilterdDepts)
-                    {
-                       <Option value="@item.Id">@item.DepName</Option>
-                    }
-                </InputSelect>
-            </div>
 
-          </div>
-          <br/>
-    <div class="row">
-        <div class="col">
-            <label>Status</label>
-            <select class="form-control" @bind="EmployeeViewModel.EmploymentStatus">
-                <option>Select Status</option>
-                <option value="Contract">Contract</option>
-                <option value="Perminant">Perminant</option>
-                <option value="Daily Wages">Daily Wages</option>
-                <option value="Space Man">Space Man</option>
-            </select>
+
+   @if (EmployeeViewModel is null)
+    {
+       <h2>We Are Loading Your Data</h2>
+    }else
+    {
+        <div style="text-align:center;">
+          <img style="height:200px;width:200px;border-radius:50%" src="@EmployeeViewModel.EmpImagePath" alt="EmpImagePath" />
         </div>
-        <div class="col">
-            <label>City</label>
-            <select class="form-control" @bind="EmployeeViewModel.City">
-                <option>Emp City</option>
-                <option value="Baghdad">Baghdad</option>
-                <option value="Basra">Basra</option>
-                <option value="Babel">Babel</option>
-                <option value="Kut">Kut</option>
-            </select>
-        </div>
-        <div class="col">
-            <label>Date Of Employemnt</label>
-            <input type="date" class="form-control" @bind-value="EmployeeViewModel.DateOfEmployemnt" />
-        </div>
+    <div style="padding:20px">
+        <EditForm Model="EmployeeViewModel" OnValidSubmit="EditData">
+                <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
+                    <div class="col">
+                        <label>Please Enter Full Name</label>
+                    <InputText @bind-Value="EmployeeViewModel.EmpFullName" placeholder="Full Name" class="form-control" />
+                    </div>
+                    <div class="col">
+                        <label>Your Id Number</label>
+                    <input maxlength="14" min="14" @bind-value="@EmployeeViewModel.EmpNumber" type="text" placeholder="Emp Id" class="form-control" />
+                    </div>
+                    <div class="col">
+                        <label>Your Age please </label>
+                    <input @bind-value="@EmployeeViewModel.EmpAge" type="number" placeholder="Example.. 25 , 30 ,40....etc" class="form-control" />
+                    </div>
+                </div>
+                <br />
+                 <div class="row row-cols-lg-3 row-cols-md-2 row-cols-sm-1 row-cols-1">
+                    <div class="col">
+                        <label>Please Enter Your Salary</label>
+                        <input @bind-value="@EmployeeViewModel.EmpSalary" type="number" class="form-control" />
+                    </div>
+
+                    <div class="col">
+                        <label>Office</label>
+                        <InputSelect class="form-control" Value="EmployeeViewModel.OfficeId" ValueExpression="@(()=>EmployeeViewModel.OfficeId)" ValueChanged="@((int value)=>FilterListOfDepts(value))" >
+                            <option>Selected Office</option>
+                            @foreach (var item in ListOfAllOffices)
+                            {
+                               <Option value="@item.Id">@item.OfficeName</Option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div class="col">
+                        <label>Departments</label>
+                        <InputSelect class="form-control" Value="EmployeeViewModel.EmpDep" ValueExpression="@(()=>EmployeeViewModel.EmpDep)" ValueChanged="@((int value)=>ChangeUserDept(value))">
+                            <option>Selected Department</option>
+                            @foreach (var item in ListOfFilterdDepts)
+                            {
+                               <Option value="@item.Id">@item.DepName</Option>
+                            }
+                        </InputSelect>
+                    </div>
+
+                  </div>
+                  <br/>
+            <div class="row">
+                <div class="col">
+                    <label>Status</label>
+                    <select class="form-control" @bind="EmployeeViewModel.EmploymentStatus">
+                        <option>Select Status</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Perminant">Perminant</option>
+                        <option value="Daily Wages">Daily Wages</option>
+                        <option value="Space Man">Space Man</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>City</label>
+                    <select class="form-control" @bind="EmployeeViewModel.City">
+                        <option>Emp City</option>
+                        <option value="Baghdad">Baghdad</option>
+                        <option value="Basra">Basra</option>
+                        <option value="Babel">Babel</option>
+                        <option value="Kut">Kut</option>
+                    </select>
+                </div>
+                <div class="col">
+                    <label>Date Of Employemnt</label>
+                    <input type="date" class="form-control" @bind-value="EmployeeViewModel.DateOfEmployemnt" />
+                </div>
+            </div>
+            <br/>
+            <InputFile  accept=".png,.jpg,.jpeg" class="form-control" OnChange="CheckFile"  />
+            <br/>
+            <button class="btn btn-outline-primary form-control" type="submit">Edit Data</button>
+
+           </EditForm>
     </div>
-    <br/>
-    <button class="btn btn-outline-primary form-control" type="submit">Edit Data</button>
+}
 
-   </EditForm>
-
-
-</div>
 
 
 
@@ -108,6 +121,7 @@
     public List<DepModel> ListOfFilterdDepts { get; set; } = new List<DepModel>();
 
 
+    public InputFileChangeEventArgs UplaodedUserImage { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -127,13 +141,78 @@
 
     private async Task EditData()
     {
-        var Response = await _Emp.EditEmpViewModel(EmployeeViewModel);
-        _Sb.Add(Response, Severity.Info);
+        if (UplaodedUserImage is null)
+        {
+            var Response = await _Emp.EditEmpViewModel(EmployeeViewModel);
+            _Sb.Add(Response, Severity.Info);
+        }else
+        {
+            var ImagePath = await UploadUserImageToFileSystem();
+            if (ImagePath is null || ImagePath == "")
+            {
+                _Sb.Add("Please Reupload the image please", Severity.Warning);
+            }else
+            {
+                var ImagePathToBeDeleted = $"{_env.WebRootPath}\\{EmployeeViewModel.EmpImagePath}";
+                File.Delete(ImagePathToBeDeleted);
+                EmployeeViewModel.EmpImagePath = ImagePath;
+                var Response = await _Emp.EditEmpViewModel(EmployeeViewModel);
+                _Sb.Add(Response, Severity.Info);
+            }
+        }
     }
 
     private void ChangeUserDept(int DeptId)
     {
         EmployeeViewModel.EmpDep = DeptId;
     }
+
+
+    private async Task CheckFile(InputFileChangeEventArgs UploadedFile)
+    {
+        if (UploadedFile.File.ContentType == "image/png" || UploadedFile.File.ContentType == "image/jpeg")
+        {
+            if (UploadedFile.File.Size > 2000000)
+            {
+                await _js.InvokeVoidAsync("alert", "Image Size larger than 2 MB please upload an image less that 2MB");
+            }
+            else
+            {
+                await _js.InvokeVoidAsync("alert", "Everything Looks Good");
+                UplaodedUserImage = UploadedFile;
+            }
+        }
+        else
+        {
+            await _js.InvokeVoidAsync("alert", "Please Upload png or jpeg Image File");
+            return;
+        }
+    }
+
+
+    private async Task<string> UploadUserImageToFileSystem()
+    {
+
+        var FileName = EmployeeViewModel.EmpFullName + "_" + Guid.NewGuid().ToString() + $"{UplaodedUserImage.File.Name}";
+        // MohammedAbdull_109273918628736127835gbegt675e
+        var FolderPath = $"{_env.WebRootPath}\\EmpImages";
+        // var FullPath = //server/wwwroot/EmpImages/FileName
+        var FullPath = Path.Combine(FolderPath, FileName);
+
+        var MemoryStream = new MemoryStream();
+        await UplaodedUserImage.File.OpenReadStream(2000000).CopyToAsync(MemoryStream);
+
+
+        // FileMode : to give permission to the filestream to create files
+        await using (var fs = new FileStream(FullPath, FileMode.Create, FileAccess.Write))
+        {
+            MemoryStream.WriteTo(fs);
+        }
+
+        return $"EmpImages\\{FileName}";
+    }
+
+
+
 
 }

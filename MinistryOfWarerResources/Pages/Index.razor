@@ -160,7 +160,6 @@
                 await _js.InvokeVoidAsync("alert", "Everything Looks Good");
                 UplaodedUserImage = UploadedFile;
             }
-
         }else
         {
             await _js.InvokeVoidAsync("alert", "Please Upload png or jpeg Image File");
@@ -182,14 +181,13 @@
         var MemoryStream = new MemoryStream();
         await UplaodedUserImage.File.OpenReadStream(2000000).CopyToAsync(MemoryStream);
 
-
         // FileMode : to give permission to the filestream to create files 
         await using (var fs = new FileStream(FullPath, FileMode.Create, FileAccess.Write))
         {
             MemoryStream.WriteTo(fs);
         }
 
-        return FullPath;
+        return $"EmpImages\\{FileName}";
     }
 
 

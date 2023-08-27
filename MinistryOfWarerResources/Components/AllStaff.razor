@@ -14,7 +14,6 @@
 <div style="padding:20px">
 
     <MudDataGrid T="EmpModel" Items="@Elements.Take(4)" ReadOnly="@_readOnly" EditMode="@(_isCellEditMode ? DataGridEditMode.Cell : DataGridEditMode.Form)"
-                 StartedEditingItem="@StartedEditingItem" CanceledEditingItem="@CanceledEditingItem" CommittedItemChanges="@CommittedItemChanges"
                  Bordered="true" Dense="true" EditTrigger="@(_editTriggerRowClick ? DataGridEditTrigger.OnRowClick : DataGridEditTrigger.Manual)">
 
     <ToolBarContent>
@@ -35,7 +34,7 @@
         <PropertyColumn Property="x => x.DeptTable.OfficeTable.OfficeName" Title="Office Name" />
         <TemplateColumn>
             <CellTemplate>
-                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="@context.Actions.StartEditingItemAsync" />
+                    <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="(()=>StartedEditingItemFunction(context.Item))" />
             </CellTemplate>
         </TemplateColumn>
     </Columns>
@@ -99,6 +98,8 @@
     {
         _events.Insert(0, $"Event = RowClick, Index = {args.RowIndex}, Data = {System.Text.Json.JsonSerializer.Serialize(args.Item)}");
     }
+
+
     void SelectedItemsChanged(HashSet<EmpModel> items)
     {
         _events.Insert(0, $"Event = SelectedItemsChanged, Data = {System.Text.Json.JsonSerializer.Serialize(items)}");
@@ -121,11 +122,8 @@
     }
 
 
-
-
-    private async Task StartedEditingItem(EmpModel item)
+    private async Task StartedEditingItemFunction(EmpModel item)
     {
-
 
         //_Nav.NavigateTo($"/EditEmp/{item.Id}");
         var Parameters = new DialogParameters();

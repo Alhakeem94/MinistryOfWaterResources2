@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MinistryOfWarerResources.Data;
 
@@ -11,9 +12,10 @@ using MinistryOfWarerResources.Data;
 namespace MinistryOfWarerResources.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230827091622_SeedingDataBase")]
+    partial class SeedingDataBase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,16 +54,9 @@ namespace MinistryOfWarerResources.Data.Migrations
                         new
                         {
                             Id = "oi2eoij-1oqjsdkj-kaslk-OwnerRole",
-                            ConcurrencyStamp = "22c8042b-a29a-4930-84ff-ec63fae52c82",
+                            ConcurrencyStamp = "150cac7c-e242-466f-9e00-fe4835bdd92b",
                             Name = "owner",
                             NormalizedName = "OWNER"
-                        },
-                        new
-                        {
-                            Id = "09iasdlkamsoidu9a8sdkasmd",
-                            ConcurrencyStamp = "440b21ee-6ec0-4f84-8c28-022690f0ef6b",
-                            Name = "admin",
-                            NormalizedName = "ADMIN"
                         });
                 });
 
@@ -159,7 +154,7 @@ namespace MinistryOfWarerResources.Data.Migrations
                         {
                             Id = "a18be9c0-aa65-4af8-bd17-00bd9344e575",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e02d89f4-2db6-4cd5-ab6e-3d3497364559",
+                            ConcurrencyStamp = "922ff76b-c46a-4864-b12a-c29ce48a03ae",
                             Email = "MohammedOwner",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
@@ -167,7 +162,7 @@ namespace MinistryOfWarerResources.Data.Migrations
                             NormalizedUserName = "MOHAMMEDOWNER",
                             PasswordHash = "Moh12345_",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "97cdd365-2bf7-42ff-93f6-fb6297993485",
+                            SecurityStamp = "48c68039-5134-487d-b96c-35b368865c4f",
                             TwoFactorEnabled = false,
                             UserName = "MohammedOwner"
                         });

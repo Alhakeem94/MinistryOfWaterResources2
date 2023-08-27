@@ -1,0 +1,50 @@
+﻿@page "/SystemUsers"
+@using Microsoft.AspNetCore.Identity;
+
+@inject ISystemUsers _Users
+
+
+<MudSimpleTable Hover="true" Dense="true" FixedHeader="@fixedheader" Style="@(fixedheader?"height:300px;":"")">
+    <thead>
+        <tr>
+           <th>User Name</th>
+           <th>PassWord</th>
+           <th>Make Admin</th>
+           <th>Make Regulator</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in ListOfAllUsers)
+        {
+            <tr>
+                <td>@item.UserName</td>
+                <td>@item.PasswordHash</td>
+                <td><button class="btn btn-primary">Admin</button></td>
+                <td><button class="btn btn-primary">Regulator</button></td>
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+<MudSwitch @bind-Checked="@fixedheader">Fixed Header</MudSwitch>
+
+
+
+
+
+
+
+@code {
+
+
+    bool fixedheader = true;
+
+    public List<IdentityUser> ListOfAllUsers { get; set; } = new List<IdentityUser>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListOfAllUsers = await _Users.GetAllUsers();
+    }
+
+
+
+}
