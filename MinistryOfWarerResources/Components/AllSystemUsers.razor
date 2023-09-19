@@ -1,7 +1,14 @@
 ﻿@page "/SystemUsers"
 @using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore;
+@using MinistryOfWarerResources.Data;
+@using MinistryOfWarerResources.ViewModels;
 
 @inject ISystemUsers _Users
+@inject IJSRuntime _js
+@inject ISnackbar _Sb
+
+@inject ApplicationDbContext _db
 
 
 <MudSimpleTable Hover="true" Dense="true" FixedHeader="@fixedheader" Style="@(fixedheader?"height:300px;":"")">
@@ -9,6 +16,7 @@
         <tr>
            <th>User Name</th>
            <th>PassWord</th>
+           <th>User Role</th>
            <th>Make Admin</th>
            <th>Make Regulator</th>
         </tr>
@@ -16,12 +24,28 @@
     <tbody>
         @foreach (var item in ListOfAllUsers)
         {
-            <tr>
-                <td>@item.UserName</td>
-                <td>@item.PasswordHash</td>
-                <td><button class="btn btn-primary">Admin</button></td>
-                <td><button class="btn btn-primary">Regulator</button></td>
-            </tr>
+            @if (item.HasARole == false)
+            {
+                <tr style="background-color:lightgrey">
+                    <td>@item.UserName</td>
+                    <td>@item.PassWord</td>
+                    <td>@item.Role</td>
+                    <td><button class="btn btn-primary" @onclick="(()=>MakeAdmin(item.UserId))">Admin</button></td>
+                    <td><button class="btn btn-primary" @onclick="(()=>MakeRegulator(item.UserId))">Regulator</button></td>
+                </tr>
+            }else
+            {
+                <tr style="background-color:lightblue">
+                    <td>@item.UserName</td>
+                    <td>@item.PassWord</td>
+                    <td>@item.Role</td>
+                    <td><button class="btn btn-primary" @onclick="(()=>MakeAdmin(item.UserId))">Admin</button></td>
+                    <td><button class="btn btn-primary" @onclick="(()=>MakeRegulator(item.UserId))">Regulator</button></td>
+                    <td><button class="btn btn-primary" @onclick="(()=>EditToRegulator(item.UserId))">Regulator</button></td>
+
+                </tr>
+            }
+           
         }
     </tbody>
 </MudSimpleTable>
@@ -38,13 +62,79 @@
 
     bool fixedheader = true;
 
-    public List<IdentityUser> ListOfAllUsers { get; set; } = new List<IdentityUser>();
+    public List<AllUsersViewModel> ListOfAllUsers { get; set; } = new List<AllUsersViewModel>();
 
     protected override async Task OnInitializedAsync()
     {
-        ListOfAllUsers = await _Users.GetAllUsers();
+        ListOfAllUsers = await _Users.GetListOfAllUsersWithRoles();
     }
 
 
+
+    private async Task MakeAdmin(string UserId)
+    {
+        var UserResponse = await _js.InvokeAsync<bool>("confirm","Are you sure to add the user to admin role?");
+        if (UserResponse == true)
+        {
+            var BackEndResponse = await _Users.AddUserToAdminRole(UserId);
+            if (BackEndResponse == true)
+            {
+                _Sb.Add("The User Has been added to the admin role ",Severity.Success);
+                ListOfAllUsers = await _Users.GetListOfAllUsersWithRoles();
+
+            }else
+            {
+                _Sb.Add("The User already has a role in the system",Severity.Error);      
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    private async Task MakeRegulator(string UserId)
+    {
+        var UserResponse = await _js.InvokeAsync<bool>("confirm", "Are you sure to add the user to Regulator role?");
+        if (UserResponse == true)
+        {
+            var BackEndResponse = await _Users.AddUserToRegulatorRole(UserId);
+            if (BackEndResponse == true)
+            {
+                _Sb.Add("The User Has been added to the Regulator role ", Severity.Success);
+                ListOfAllUsers = await _Users.GetListOfAllUsersWithRoles();
+            }
+            else
+            {
+                _Sb.Add("The User already has a role in the system", Severity.Error);
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    private async Task EditToRegulator(string UserId)
+    {
+        var UserResponse = await _js.InvokeAsync<bool>("confirm", "Are you sure to edit the user role?");
+        if (UserResponse == true)
+        {
+            var BackEndResponse = await _Users.EditRoleFromAdminToRegulator(UserId);
+            if (BackEndResponse == true)
+            {
+                _Sb.Add("The User Has been added to the Regulator role ", Severity.Success);
+                ListOfAllUsers = await _Users.GetListOfAllUsersWithRoles();
+            }
+            else
+            {
+                _Sb.Add("The User already has a role in the system", Severity.Error);
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
 
 }

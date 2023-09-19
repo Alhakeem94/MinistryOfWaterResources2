@@ -22,6 +22,10 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\EmpImages\" />
+    <Folder Include="wwwroot\FirstImage\" />
+    <Folder Include="wwwroot\ForthImage\" />
+    <Folder Include="wwwroot\ThirdImage\" />
+    <Folder Include="wwwroot\SecondImage\" />
   </ItemGroup>
 
 </Project>

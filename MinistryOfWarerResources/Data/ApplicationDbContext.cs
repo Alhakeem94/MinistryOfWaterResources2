@@ -37,6 +37,12 @@ namespace MinistryOfWarerResources.Data
                 Name = "admin",
                 NormalizedName = "ADMIN"
             });
+            builder.Entity<IdentityRole>().HasData(new IdentityRole
+            {
+                Id = "09iasdlkamsoidu9a8sdkapiasjdm",
+                Name = "regulator",
+                NormalizedName = "REGULATOR"
+            });
 
             builder.Entity<IdentityUser>().HasData(new IdentityUser
             {

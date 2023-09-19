@@ -8,6 +8,7 @@
 @inject IDepts _Dept
 @inject IJSRuntime _js
 
+@attribute [Authorize(Roles ="owner")]
 
 <form @onsubmit="SaveDept">
         <div class="row">

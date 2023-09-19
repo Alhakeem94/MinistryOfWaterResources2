@@ -9,6 +9,10 @@
 @inject IWebHostEnvironment _env
 @inject ApplicationDbContext _db
 @inject IEmp _Emp
+@inject AuthenticationStateProvider Auth
+
+
+<h3>@UserName</h3>
 
 
 <div style="border:solid;padding:20px;background-color:whitesmoke;border-color:lightblue;border-radius:20px;">
@@ -89,6 +93,9 @@
 
         <br/>
         <InputFile  accept=".png,.jpg,.jpeg" class="form-control" OnChange="CheckFile"  />
+        <InputFile  accept=".png,.jpg,.jpeg" class="form-control" OnChange="CheckFile"  />
+        <InputFile  accept=".png,.jpg,.jpeg" class="form-control" OnChange="CheckFile"  />
+        <InputFile accept=".png,.jpg,.jpeg"  class="form-control" OnChange="CheckFile" />
 
         <br/>
         <button class="btn btn-primary form-control">Save Emp</button>
@@ -109,6 +116,13 @@
 
     public InputFileChangeEventArgs UplaodedUserImage { get; set; }
 
+    public string UserName { get; set; } = "";
+
+    public InputFileChangeEventArgs FirstImage { get; set; }
+    public InputFileChangeEventArgs SecondImage { get; set; }
+    public InputFileChangeEventArgs ThirdImage { get; set; }
+    public InputFileChangeEventArgs ForthImage { get; set; }
+
 
 
 
@@ -117,6 +131,9 @@
         ListOfOffices = await _db.OfficeTable.ToListAsync();
         ListOfDepts = await _db.DepTable.Include(a=>a.OfficeTable).ToListAsync();
         EmpData.DateOfEmployemnt = DateTime.Now;
+        var AuthState = await Auth.GetAuthenticationStateAsync();
+        var User = AuthState.User;
+        UserName = User.Identity.Name;
     }
 
 
@@ -146,6 +163,12 @@
 
             }
         }
+
+
+
+        // Var FirstImagePath = await UploadUserImageToFileSystem("FirstImage")
+
+
     }
 
     private async Task CheckFile(InputFileChangeEventArgs UploadedFile)
@@ -159,6 +182,7 @@
             {
                 await _js.InvokeVoidAsync("alert", "Everything Looks Good");
                 UplaodedUserImage = UploadedFile;
+                // FirstUImage = UploadedFile
             }
         }else
         {
@@ -169,12 +193,12 @@
 
 
 
-    private async Task<string> UploadUserImageToFileSystem()
+    private async Task<string> UploadUserImageToFileSystem(string FileName2)
     {
 
         var FileName = EmpData.EmpFullName + "_" + Guid.NewGuid().ToString() + $"{UplaodedUserImage.File.Name}";
         // MohammedAbdull_109273918628736127835gbegt675e
-        var FolderPath = $"{_env.WebRootPath}\\EmpImages";
+        var FolderPath = $"{_env.WebRootPath}\\{FileName}";
         // var FullPath = //server/wwwroot/EmpImages/FileName
         var FullPath = Path.Combine(FolderPath, FileName);
 

@@ -164,19 +164,19 @@ namespace MinistryOfWarerResources.BackEnd.Repositories
         {
             try
             {
-                var Model = await _db.EmpTable.FirstOrDefaultAsync(a => a.Id == EditedEmp.Id);
+                var ModelUnchangedInTheDataBase = await _db.EmpTable.FirstOrDefaultAsync(a => a.Id == EditedEmp.Id);
 
-                Model.EmpNumber = EditedEmp.EmpNumber;
-                Model.EmpFullName = EditedEmp.EmpFullName;
-                Model.DateOfEmployemnt = EditedEmp.DateOfEmployemnt;
-                Model.EmpDep = EditedEmp.EmpDep;
-                Model.City = EditedEmp.City;
-                Model.EmpSalary = EditedEmp.EmpSalary;
-                Model.EmpAge = EditedEmp.EmpAge;
-                Model.EmploymentStatus = EditedEmp.EmploymentStatus;
-                Model.EmpImagePath = EditedEmp.EmpImagePath;
+                ModelUnchangedInTheDataBase.EmpNumber = EditedEmp.EmpNumber;
+                ModelUnchangedInTheDataBase.EmpFullName = EditedEmp.EmpFullName;
+                ModelUnchangedInTheDataBase.DateOfEmployemnt = EditedEmp.DateOfEmployemnt;
+                ModelUnchangedInTheDataBase.EmpDep = EditedEmp.EmpDep;
+                ModelUnchangedInTheDataBase.City = EditedEmp.City;
+                ModelUnchangedInTheDataBase.EmpSalary = EditedEmp.EmpSalary;
+                ModelUnchangedInTheDataBase.EmpAge = EditedEmp.EmpAge;
+                ModelUnchangedInTheDataBase.EmploymentStatus = EditedEmp.EmploymentStatus;
+                ModelUnchangedInTheDataBase.EmpImagePath = EditedEmp.EmpImagePath;
 
-                _db.EmpTable.Update(Model);
+                _db.EmpTable.Update(ModelUnchangedInTheDataBase);
                 await _db.SaveChangesAsync();
                 return "The Recored has been edited succesfully";
 

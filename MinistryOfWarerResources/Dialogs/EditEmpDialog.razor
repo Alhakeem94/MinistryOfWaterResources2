@@ -43,7 +43,8 @@
 
                     <div class="col">
                         <label>Office</label>
-                        <InputSelect class="form-control" Value="EmployeeViewModel.OfficeId" ValueExpression="@(()=>EmployeeViewModel.OfficeId)" ValueChanged="@((int value)=>FilterListOfDepts(value))" >
+                        <InputSelect class="form-control" Value="EmployeeViewModel.OfficeId" ValueExpression="@(()=>EmployeeViewModel.OfficeId)"
+                            ValueChanged="@((int value)=>FilterListOfDepts(value))" >
                             <option>Selected Office</option>
                             @foreach (var item in ListOfAllOffices)
                             {
@@ -77,7 +78,7 @@
                 </div>
                 <div class="col">
                     <label>City</label>
-                    <select class="form-control" @bind="EmployeeViewModel.City">
+                    <select class="form-control" @bind="EmployeeViewModel.City" >
                         <option>Emp City</option>
                         <option value="Baghdad">Baghdad</option>
                         <option value="Basra">Basra</option>
@@ -139,19 +140,30 @@
     }
 
 
+
+
+
+
+
+
+
+
+
     private async Task EditData()
     {
         if (UplaodedUserImage is null)
         {
             var Response = await _Emp.EditEmpViewModel(EmployeeViewModel);
             _Sb.Add(Response, Severity.Info);
-        }else
+        }
+         else
         {
             var ImagePath = await UploadUserImageToFileSystem();
             if (ImagePath is null || ImagePath == "")
             {
                 _Sb.Add("Please Reupload the image please", Severity.Warning);
-            }else
+            }
+            else
             {
                 var ImagePathToBeDeleted = $"{_env.WebRootPath}\\{EmployeeViewModel.EmpImagePath}";
                 File.Delete(ImagePathToBeDeleted);
@@ -162,6 +174,17 @@
         }
     }
 
+
+
+
+
+
+
+
+
+
+
+
     private void ChangeUserDept(int DeptId)
     {
         EmployeeViewModel.EmpDep = DeptId;
@@ -170,7 +193,7 @@
 
     private async Task CheckFile(InputFileChangeEventArgs UploadedFile)
     {
-        if (UploadedFile.File.ContentType == "image/png" || UploadedFile.File.ContentType == "image/jpeg")
+        if (UploadedFile.File.ContentType == "image/png" || UploadedFile.File.ContentType == "image/jpeg" || UploadedFile.File.ContentType == "image/jpg")
         {
             if (UploadedFile.File.Size > 2000000)
             {

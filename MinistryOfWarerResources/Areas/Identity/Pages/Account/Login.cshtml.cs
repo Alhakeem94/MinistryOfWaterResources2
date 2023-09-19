@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Components.Authorization;
+
 namespace MinistryOfWarerResources.Areas.Identity.Pages.Account
 {
     public class LoginModel : PageModel
@@ -21,12 +23,13 @@ namespace MinistryOfWarerResources.Areas.Identity.Pages.Account
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
         private readonly UserManager<IdentityUser> _userManager;
-
-        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, UserManager<IdentityUser> userManager)
+        private readonly AuthenticationStateProvider _Auth;
+        public LoginModel(SignInManager<IdentityUser> signInManager, ILogger<LoginModel> logger, UserManager<IdentityUser> userManager, AuthenticationStateProvider auth)
         {
             _signInManager = signInManager;
             _logger = logger;
             _userManager = userManager;
+            _Auth = auth;
         }
 
         [BindProperty]
@@ -79,6 +82,7 @@ namespace MinistryOfWarerResources.Areas.Identity.Pages.Account
             {
                 if (PassWord.Trim() == User.PasswordHash)
                 {
+                    await _signInManager.SignInAsync(User,false);
                     return Microsoft.AspNetCore.Identity.SignInResult.Success;
                 }
                 else

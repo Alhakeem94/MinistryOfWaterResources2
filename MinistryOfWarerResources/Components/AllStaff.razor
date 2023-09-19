@@ -10,6 +10,9 @@
 @inject IDialogService _Dialog
 @inject NavigationManager _Nav
 
+@attribute [Authorize(Roles ="owner")]
+
+
 
 <div style="padding:20px">
 
@@ -19,7 +22,14 @@
     <ToolBarContent>
         <MudText Typo="Typo.h6">All Emps Table</MudText>
         <br/>
-        <button @onclick="DeleteEmps" class="btn btn-outline-danger" style="margin-left:10px">Delete Emps</button>
+        <AuthorizeView Roles="owner">
+            <Authorized>
+               <button @onclick="DeleteEmps" class="btn btn-outline-danger" style="margin-left:10px">Delete Emps</button>
+            </Authorized>
+            <NotAuthorized> 
+                <h3>You are not authorized</h3>
+            </NotAuthorized>
+        </AuthorizeView>
         <MudSpacer />
         <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
